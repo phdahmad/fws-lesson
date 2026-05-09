@@ -4,7 +4,7 @@
 >
 > A bilingual interactive lesson (Arabic/English) for CS and IE undergraduates, explaining the Field Workforce Scheduling problem and its AI-driven solutions.
 
-🌐 **[View the lesson live](https://USERNAME.github.io/fws-lesson/)**
+🌐 **[View the lesson live](https://phdahmad.github.io/fws-lesson/)**
 
 ---
 
