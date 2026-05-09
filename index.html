@@ -1,0 +1,3045 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Field Workforce Scheduling — Interactive Lesson</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Tajawal:wght@300;400;500;700&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+  /* ============= DESIGN TOKENS ============= */
+  :root {
+    --forest: #2D4A3E;
+    --forest-deep: #1A2E26;
+    --forest-light: #4A6B5C;
+    --cream: #F5F0E6;
+    --cream-warm: #EAE2D0;
+    --paper: #FAF7F0;
+    --burnt: #C65D2E;
+    --burnt-deep: #8F3F1B;
+    --gold: #B8893E;
+    --ink: #1F1F1B;
+    --ink-soft: #4A4A45;
+    --ink-mute: #7A7A72;
+    --rule: rgba(31,31,27,0.12);
+    --rule-strong: rgba(31,31,27,0.25);
+    --serif-en: 'Cormorant Garamond', 'Amiri', serif;
+    --serif-ar: 'Amiri', 'Cormorant Garamond', serif;
+    --sans-en: 'Inter', 'Tajawal', sans-serif;
+    --sans-ar: 'Tajawal', 'Inter', sans-serif;
+    --mono: 'JetBrains Mono', 'Courier New', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans-en);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  body[dir="rtl"] {
+    font-family: var(--sans-ar);
+  }
+
+  /* ============= LANGUAGE TOGGLE ============= */
+  .lang-bar {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    gap: 4px;
+    background: var(--paper);
+    border: 1px solid var(--rule-strong);
+    border-radius: 999px;
+    padding: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+
+  body[dir="rtl"] .lang-bar {
+    right: auto;
+    left: 20px;
+  }
+
+  .lang-btn {
+    border: none;
+    background: transparent;
+    padding: 6px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: var(--sans-en);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    color: var(--ink-soft);
+    transition: all 0.2s;
+  }
+
+  .lang-btn.active {
+    background: var(--forest);
+    color: var(--cream);
+  }
+
+  /* ============= LAYOUT ============= */
+  .page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* ============= HERO ============= */
+  .hero {
+    min-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 80px 0 60px;
+    border-bottom: 1px solid var(--rule);
+    position: relative;
+  }
+
+  .hero-eyebrow {
+    font-family: var(--sans-en);
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--burnt);
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  body[dir="rtl"] .hero-eyebrow {
+    font-family: var(--sans-ar);
+    letter-spacing: 0;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    width: 40px;
+    height: 1px;
+    background: var(--burnt);
+  }
+
+  .hero h1 {
+    font-family: var(--serif-en);
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 500;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--forest-deep);
+    margin-bottom: 24px;
+  }
+
+  body[dir="rtl"] .hero h1 {
+    font-family: var(--serif-ar);
+    line-height: 1.2;
+    letter-spacing: 0;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--burnt);
+    font-weight: 400;
+  }
+
+  .hero-sub {
+    font-family: var(--serif-en);
+    font-style: italic;
+    font-size: clamp(20px, 2.5vw, 28px);
+    color: var(--ink-soft);
+    max-width: 700px;
+    margin-bottom: 48px;
+    line-height: 1.4;
+  }
+
+  body[dir="rtl"] .hero-sub {
+    font-family: var(--serif-ar);
+    font-style: normal;
+  }
+
+  .hero-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 32px;
+    max-width: 800px;
+    padding-top: 32px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .meta-item .meta-label {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-bottom: 6px;
+  }
+
+  body[dir="rtl"] .meta-item .meta-label {
+    letter-spacing: 0;
+    font-size: 12px;
+  }
+
+  .meta-item .meta-value {
+    font-family: var(--serif-en);
+    font-size: 22px;
+    color: var(--forest-deep);
+  }
+
+  body[dir="rtl"] .meta-item .meta-value {
+    font-family: var(--sans-ar);
+    font-weight: 500;
+  }
+
+  .scroll-cue {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    animation: bounce 2.5s ease-in-out infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); opacity: 0.5; }
+    50% { transform: translateX(-50%) translateY(8px); opacity: 1; }
+  }
+
+  /* ============= SECTION STRUCTURE ============= */
+  section {
+    padding: 100px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .section-header {
+    margin-bottom: 60px;
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  body[dir="rtl"] .section-header {
+    grid-template-columns: 1fr 80px;
+  }
+
+  body[dir="rtl"] .section-num {
+    order: 2;
+    text-align: right;
+  }
+
+  .section-num {
+    font-family: var(--serif-en);
+    font-style: italic;
+    font-size: 56px;
+    color: var(--burnt);
+    line-height: 1;
+    font-weight: 400;
+  }
+
+  .section-title h2 {
+    font-family: var(--serif-en);
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 500;
+    line-height: 1.1;
+    color: var(--forest-deep);
+    margin-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  body[dir="rtl"] .section-title h2 {
+    font-family: var(--serif-ar);
+    line-height: 1.3;
+    letter-spacing: 0;
+  }
+
+  .section-title .kicker {
+    font-size: 12px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--burnt);
+    margin-bottom: 8px;
+  }
+
+  body[dir="rtl"] .section-title .kicker {
+    letter-spacing: 0;
+    font-size: 14px;
+  }
+
+  /* ============= PROSE ============= */
+  .prose {
+    max-width: 720px;
+    font-size: 17px;
+    line-height: 1.75;
+    color: var(--ink-soft);
+  }
+
+  body[dir="rtl"] .prose {
+    font-size: 18px;
+    line-height: 1.9;
+  }
+
+  .prose p { margin-bottom: 1.2em; }
+
+  .prose strong {
+    color: var(--forest-deep);
+    font-weight: 600;
+  }
+
+  .pull-quote {
+    font-family: var(--serif-en);
+    font-style: italic;
+    font-size: 28px;
+    line-height: 1.4;
+    color: var(--forest);
+    border-left: 3px solid var(--burnt);
+    padding: 20px 0 20px 32px;
+    margin: 40px 0;
+    max-width: 800px;
+  }
+
+  body[dir="rtl"] .pull-quote {
+    font-family: var(--serif-ar);
+    font-style: normal;
+    border-left: none;
+    border-right: 3px solid var(--burnt);
+    padding: 20px 32px 20px 0;
+  }
+
+  /* ============= CARDS GRID ============= */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    margin-top: 40px;
+  }
+
+  .card {
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 28px;
+    transition: all 0.3s ease;
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(45,74,62,0.1);
+    border-color: var(--forest-light);
+  }
+
+  .card-num {
+    font-family: var(--serif-en);
+    font-style: italic;
+    font-size: 14px;
+    color: var(--burnt);
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .card-title {
+    font-family: var(--serif-en);
+    font-size: 22px;
+    color: var(--forest-deep);
+    margin-bottom: 6px;
+    line-height: 1.2;
+  }
+
+  body[dir="rtl"] .card-title {
+    font-family: var(--sans-ar);
+    font-weight: 700;
+    font-size: 20px;
+  }
+
+  .card-sub {
+    font-size: 13px;
+    color: var(--ink-mute);
+    margin-bottom: 14px;
+    letter-spacing: 0.05em;
+  }
+
+  body[dir="rtl"] .card-sub {
+    font-size: 14px;
+    letter-spacing: 0;
+  }
+
+  .card-body {
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+
+  /* ============= MATH BLOCK ============= */
+  .math-block {
+    background: var(--forest-deep);
+    color: var(--cream);
+    padding: 40px 36px;
+    border-radius: 4px;
+    font-family: var(--mono);
+    font-size: 15px;
+    line-height: 1.9;
+    margin: 32px 0;
+    overflow-x: auto;
+    direction: ltr;
+    text-align: left;
+  }
+
+  .math-block .math-label {
+    font-family: var(--sans-en);
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .math-block .math-line {
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .math-block .math-comment {
+    color: var(--ink-mute);
+    font-style: italic;
+    font-size: 13px;
+  }
+
+  .math-block .var {
+    color: var(--burnt);
+    font-style: italic;
+  }
+
+  .math-block .op {
+    color: var(--gold);
+  }
+
+  /* ============= CONSTRAINT TABLE ============= */
+  .constraint-list {
+    margin: 40px 0;
+    border-top: 1px solid var(--rule);
+  }
+
+  .constraint-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 120px;
+    gap: 32px;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: center;
+  }
+
+  body[dir="rtl"] .constraint-row {
+    grid-template-columns: 120px 1fr 60px;
+  }
+
+  .constraint-num {
+    font-family: var(--serif-en);
+    font-style: italic;
+    font-size: 24px;
+    color: var(--burnt);
+  }
+
+  .constraint-content {
+    flex: 1;
+  }
+
+  .constraint-name {
+    font-family: var(--serif-en);
+    font-size: 22px;
+    color: var(--forest-deep);
+    margin-bottom: 4px;
+  }
+
+  body[dir="rtl"] .constraint-name {
+    font-family: var(--sans-ar);
+    font-weight: 700;
+  }
+
+  .constraint-desc {
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+
+  .constraint-tag {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 999px;
+    text-align: center;
+    width: fit-content;
+    justify-self: end;
+  }
+
+  body[dir="rtl"] .constraint-tag {
+    justify-self: start;
+    letter-spacing: 0;
+    font-size: 12px;
+  }
+
+  .constraint-tag.hard {
+    background: var(--burnt-deep);
+    color: var(--cream);
+  }
+
+  .constraint-tag.soft {
+    background: var(--gold);
+    color: var(--forest-deep);
+  }
+
+  /* ============= ALGORITHM CARDS ============= */
+  .algo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 4px;
+    margin-top: 40px;
+    background: var(--rule);
+    border: 1px solid var(--rule-strong);
+  }
+
+  .algo-card {
+    background: var(--paper);
+    padding: 36px 32px;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+
+  .algo-card:hover {
+    background: var(--cream);
+  }
+
+  .algo-card .algo-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--forest);
+    color: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif-en);
+    font-style: italic;
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .algo-card h3 {
+    font-family: var(--serif-en);
+    font-size: 26px;
+    color: var(--forest-deep);
+    margin-bottom: 6px;
+    line-height: 1.2;
+  }
+
+  body[dir="rtl"] .algo-card h3 {
+    font-family: var(--sans-ar);
+    font-weight: 700;
+    font-size: 22px;
+  }
+
+  .algo-card .algo-method {
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    color: var(--burnt);
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+
+  body[dir="rtl"] .algo-card .algo-method {
+    letter-spacing: 0;
+    text-transform: none;
+    font-size: 14px;
+  }
+
+  .algo-card .algo-desc {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  .algo-card .algo-stats {
+    display: flex;
+    gap: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--rule);
+    font-size: 12px;
+  }
+
+  .algo-stat .stat-label {
+    color: var(--ink-mute);
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .algo-stat .stat-val {
+    color: var(--forest-deep);
+    font-weight: 600;
+  }
+
+  /* ============= SIMULATOR ============= */
+  .sim-container {
+    background: var(--cream);
+    border: 1px solid var(--rule-strong);
+    border-radius: 8px;
+    padding: 32px;
+    margin: 40px 0;
+  }
+
+  .sim-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .sim-title {
+    font-family: var(--serif-en);
+    font-size: 24px;
+    color: var(--forest-deep);
+  }
+
+  body[dir="rtl"] .sim-title {
+    font-family: var(--sans-ar);
+    font-weight: 700;
+    font-size: 20px;
+  }
+
+  .sim-tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 4px;
+  }
+
+  .sim-tab {
+    border: none;
+    background: transparent;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: inherit;
+    color: var(--ink-soft);
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+  }
+
+  body[dir="rtl"] .sim-tab {
+    letter-spacing: 0;
+    font-size: 13px;
+  }
+
+  .sim-tab.active {
+    background: var(--forest);
+    color: var(--cream);
+  }
+
+  .sim-panel { display: none; }
+  .sim-panel.active { display: block; }
+
+  .sim-controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .sim-control label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+
+  body[dir="rtl"] .sim-control label {
+    letter-spacing: 0;
+    text-transform: none;
+    font-size: 14px;
+  }
+
+  .sim-control label .val {
+    color: var(--burnt);
+    font-weight: 600;
+    font-family: var(--mono);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .sim-control input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: var(--rule-strong);
+    border-radius: 2px;
+    outline: none;
+  }
+
+  .sim-control input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--burnt);
+    cursor: pointer;
+    border: 2px solid var(--paper);
+    box-shadow: 0 0 0 1px var(--burnt);
+  }
+
+  .sim-control input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--burnt);
+    cursor: pointer;
+    border: 2px solid var(--paper);
+    box-shadow: 0 0 0 1px var(--burnt);
+  }
+
+  .sim-canvas-wrap {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+
+  .sim-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+  }
+
+  .sim-stat {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+
+  .sim-stat-label {
+    font-size: 11px;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-bottom: 6px;
+  }
+
+  body[dir="rtl"] .sim-stat-label {
+    letter-spacing: 0;
+    text-transform: none;
+    font-size: 13px;
+  }
+
+  .sim-stat-val {
+    font-family: var(--mono);
+    font-size: 20px;
+    color: var(--forest-deep);
+    font-weight: 600;
+  }
+
+  .sim-stat-val.success { color: #2D6B47; }
+  .sim-stat-val.warn { color: var(--burnt); }
+
+  .btn {
+    background: var(--forest);
+    color: var(--cream);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+
+  body[dir="rtl"] .btn {
+    letter-spacing: 0;
+    text-transform: none;
+    font-size: 14px;
+  }
+
+  .btn:hover {
+    background: var(--forest-deep);
+    transform: translateY(-1px);
+  }
+
+  .btn.secondary {
+    background: var(--paper);
+    color: var(--forest-deep);
+    border: 1px solid var(--rule-strong);
+  }
+
+  .btn.secondary:hover {
+    background: var(--cream);
+  }
+
+  /* ============= CODE BLOCKS ============= */
+  .code-block {
+    background: var(--forest-deep);
+    border-radius: 6px;
+    margin: 24px 0;
+    overflow: hidden;
+    direction: ltr;
+    text-align: left;
+  }
+
+  .code-header {
+    background: rgba(255,255,255,0.05);
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .code-lang {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .code-copy {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--cream);
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+
+  .code-copy:hover {
+    background: rgba(255,255,255,0.1);
+  }
+
+  .code-block pre {
+    padding: 20px 24px;
+    overflow-x: auto;
+    color: var(--cream);
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  .code-block .kw { color: #E89D5C; }
+  .code-block .str { color: #95C9A0; }
+  .code-block .num { color: #D9A86C; }
+  .code-block .com { color: #7A857F; font-style: italic; }
+  .code-block .fn { color: #C9D8A0; }
+
+  /* ============= QUIZ ============= */
+  .quiz-container {
+    margin: 40px 0;
+  }
+
+  .quiz-question {
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 28px 32px;
+    margin-bottom: 16px;
+    transition: all 0.3s;
+  }
+
+  .quiz-q-header {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .quiz-q-num {
+    font-family: var(--serif-en);
+    font-style: italic;
+    font-size: 28px;
+    color: var(--burnt);
+    line-height: 1;
+  }
+
+  .quiz-q-text {
+    font-family: var(--serif-en);
+    font-size: 20px;
+    color: var(--forest-deep);
+    line-height: 1.4;
+  }
+
+  body[dir="rtl"] .quiz-q-text {
+    font-family: var(--sans-ar);
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 1.7;
+  }
+
+  .quiz-options {
+    display: grid;
+    gap: 10px;
+  }
+
+  .quiz-option {
+    padding: 14px 18px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 15px;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-align: start;
+  }
+
+  .quiz-option:hover {
+    border-color: var(--forest-light);
+    background: var(--cream-warm);
+  }
+
+  .quiz-option .opt-letter {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--cream-warm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif-en);
+    font-size: 14px;
+    color: var(--forest-deep);
+    flex-shrink: 0;
+    font-weight: 600;
+  }
+
+  .quiz-option.correct {
+    border-color: #2D6B47;
+    background: #E8F0E8;
+    color: #1F4A30;
+  }
+
+  .quiz-option.correct .opt-letter {
+    background: #2D6B47;
+    color: var(--cream);
+  }
+
+  .quiz-option.wrong {
+    border-color: var(--burnt-deep);
+    background: #F5E0D5;
+    color: var(--burnt-deep);
+  }
+
+  .quiz-option.wrong .opt-letter {
+    background: var(--burnt-deep);
+    color: var(--cream);
+  }
+
+  .quiz-option.disabled {
+    pointer-events: none;
+  }
+
+  .quiz-feedback {
+    margin-top: 16px;
+    padding: 14px 18px;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.6;
+    display: none;
+  }
+
+  .quiz-feedback.show { display: block; }
+
+  .quiz-feedback.correct {
+    background: #E8F0E8;
+    color: #1F4A30;
+    border-left: 3px solid #2D6B47;
+  }
+
+  body[dir="rtl"] .quiz-feedback.correct {
+    border-left: none;
+    border-right: 3px solid #2D6B47;
+  }
+
+  .quiz-feedback.wrong {
+    background: #F5E0D5;
+    color: var(--burnt-deep);
+    border-left: 3px solid var(--burnt-deep);
+  }
+
+  body[dir="rtl"] .quiz-feedback.wrong {
+    border-left: none;
+    border-right: 3px solid var(--burnt-deep);
+  }
+
+  .quiz-summary {
+    background: var(--forest-deep);
+    color: var(--cream);
+    padding: 36px 32px;
+    border-radius: 8px;
+    margin-top: 32px;
+    text-align: center;
+    display: none;
+  }
+
+  .quiz-summary.show { display: block; }
+
+  .quiz-summary .score-num {
+    font-family: var(--serif-en);
+    font-size: 80px;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  .quiz-summary .score-label {
+    font-size: 14px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--cream-warm);
+    margin-bottom: 20px;
+  }
+
+  body[dir="rtl"] .quiz-summary .score-label {
+    letter-spacing: 0;
+    text-transform: none;
+    font-size: 16px;
+  }
+
+  .quiz-summary .score-msg {
+    font-family: var(--serif-en);
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.4;
+    max-width: 500px;
+    margin: 0 auto 20px;
+  }
+
+  body[dir="rtl"] .quiz-summary .score-msg {
+    font-family: var(--sans-ar);
+    font-style: normal;
+  }
+
+  /* ============= EXAMPLES SECTION ============= */
+  .example-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-top: 40px;
+  }
+
+  .example-card {
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+
+  .example-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  }
+
+  .example-card .ex-header {
+    padding: 24px 24px 0;
+  }
+
+  .example-card .ex-company {
+    font-family: var(--serif-en);
+    font-size: 28px;
+    color: var(--forest-deep);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  body[dir="rtl"] .example-card .ex-company {
+    font-family: var(--sans-ar);
+    font-weight: 700;
+    font-size: 24px;
+  }
+
+  .example-card .ex-tag {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--burnt);
+    display: block;
+    margin-bottom: 16px;
+  }
+
+  body[dir="rtl"] .example-card .ex-tag {
+    letter-spacing: 0;
+    font-size: 12px;
+  }
+
+  .example-card .ex-body {
+    padding: 0 24px 20px;
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  .example-card .ex-stat {
+    background: var(--cream);
+    padding: 14px 24px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .example-card .ex-stat-label {
+    font-size: 11px;
+    color: var(--ink-mute);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  body[dir="rtl"] .example-card .ex-stat-label {
+    letter-spacing: 0;
+    text-transform: none;
+    font-size: 12px;
+  }
+
+  .example-card .ex-stat-val {
+    font-family: var(--serif-en);
+    font-size: 22px;
+    color: var(--burnt);
+    font-weight: 500;
+  }
+
+  /* ============= FOOTER ============= */
+  footer {
+    padding: 60px 0 40px;
+    text-align: center;
+    color: var(--ink-mute);
+    font-size: 13px;
+    border-top: 1px solid var(--rule);
+  }
+
+  footer .footer-mark {
+    font-family: var(--serif-en);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--forest);
+    margin-bottom: 8px;
+  }
+
+  body[dir="rtl"] footer .footer-mark {
+    font-family: var(--sans-ar);
+    font-style: normal;
+    font-weight: 500;
+  }
+
+  /* ============= TOC NAV ============= */
+  .toc {
+    position: fixed;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 20px;
+    z-index: 500;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  body[dir="rtl"] .toc {
+    left: auto;
+    right: 20px;
+  }
+
+  .toc-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--rule-strong);
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s;
+  }
+
+  .toc-dot:hover, .toc-dot.active {
+    background: var(--burnt);
+    transform: scale(1.3);
+  }
+
+  .toc-dot::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--forest-deep);
+    color: var(--cream);
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+
+  body[dir="rtl"] .toc-dot::before {
+    left: auto;
+    right: 16px;
+  }
+
+  .toc-dot:hover::before { opacity: 1; }
+
+  /* ============= UTILITIES ============= */
+  .lang-en, .lang-ar { display: none; }
+  body[dir="ltr"] .lang-en { display: inline; }
+  body[dir="rtl"] .lang-ar { display: inline; }
+  body[dir="ltr"] .lang-en.block, body[dir="rtl"] .lang-ar.block { display: block; }
+
+  /* ============= RESPONSIVE ============= */
+  @media (max-width: 768px) {
+    .page { padding: 0 20px; }
+    .toc { display: none; }
+    .lang-bar { top: 12px; right: 12px; }
+    body[dir="rtl"] .lang-bar { left: 12px; right: auto; }
+    .section-header {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    body[dir="rtl"] .section-header {
+      grid-template-columns: 1fr;
+    }
+    .constraint-row {
+      grid-template-columns: 40px 1fr;
+      gap: 16px;
+    }
+    body[dir="rtl"] .constraint-row {
+      grid-template-columns: 1fr 40px;
+    }
+    .constraint-tag {
+      grid-column: 1 / -1;
+      justify-self: start;
+    }
+    .hero-meta { gap: 20px; }
+    section { padding: 60px 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Language toggle -->
+<div class="lang-bar">
+  <button class="lang-btn active" data-lang="en" onclick="setLang('en')">EN</button>
+  <button class="lang-btn" data-lang="ar" onclick="setLang('ar')">عربي</button>
+</div>
+
+<!-- TOC -->
+<nav class="toc">
+  <div class="toc-dot active" data-section="hero" data-label="Intro"></div>
+  <div class="toc-dot" data-section="problem" data-label="Problem"></div>
+  <div class="toc-dot" data-section="math" data-label="Formulation"></div>
+  <div class="toc-dot" data-section="constraints" data-label="Constraints"></div>
+  <div class="toc-dot" data-section="algorithms" data-label="Algorithms"></div>
+  <div class="toc-dot" data-section="simulators" data-label="Simulators"></div>
+  <div class="toc-dot" data-section="code" data-label="Code"></div>
+  <div class="toc-dot" data-section="examples" data-label="Examples"></div>
+  <div class="toc-dot" data-section="quiz" data-label="Quiz"></div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="page">
+    <div class="hero-eyebrow">
+      <span class="lang-en">An interactive lesson · Operations Research</span>
+      <span class="lang-ar">درس تفاعلي · بحوث العمليات</span>
+    </div>
+    <h1>
+      <span class="lang-en">Field Workforce<br>Scheduling, <em>solved</em>.</span>
+      <span class="lang-ar">جدولة القوى العاملة<br>الميدانية، <em>محلولة</em>.</span>
+    </h1>
+    <p class="hero-sub">
+      <span class="lang-en">How modern AI assigns thousands of technicians to thousands of jobs — without breaking a single constraint, in seconds rather than centuries.</span>
+      <span class="lang-ar">كيف يوزّع الذكاء الاصطناعي الحديث آلاف الفنيين على آلاف المهام — دون كسر أي قيد، في ثوانٍ بدلاً من قرون.</span>
+    </p>
+
+    <div class="hero-meta">
+      <div class="meta-item">
+        <div class="meta-label">
+          <span class="lang-en">Duration</span>
+          <span class="lang-ar">المدة</span>
+        </div>
+        <div class="meta-value">
+          <span class="lang-en">~ 45 minutes</span>
+          <span class="lang-ar">٤٥ دقيقة</span>
+        </div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">
+          <span class="lang-en">Level</span>
+          <span class="lang-ar">المستوى</span>
+        </div>
+        <div class="meta-value">
+          <span class="lang-en">CS / IE undergrad</span>
+          <span class="lang-ar">جامعي · حاسوب وصناعية</span>
+        </div>
+      </div>
+      <div class="meta-item">
+        <div class="meta-label">
+          <span class="lang-en">Sections</span>
+          <span class="lang-ar">الأقسام</span>
+        </div>
+        <div class="meta-value">
+          <span class="lang-en">8 sections</span>
+          <span class="lang-ar">٨ أقسام</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-cue">
+    <span class="lang-en">Scroll ↓</span>
+    <span class="lang-ar">اسحب ↓</span>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section id="problem">
+  <div class="page">
+    <div class="section-header">
+      <div class="section-num">01</div>
+      <div class="section-title">
+        <div class="kicker">
+          <span class="lang-en">Chapter one</span>
+          <span class="lang-ar">الفصل الأول</span>
+        </div>
+        <h2>
+          <span class="lang-en">The problem, in plain words.</span>
+          <span class="lang-ar">المشكلة، ببساطة.</span>
+        </h2>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p class="lang-en">
+        A maintenance company has <strong>30 technicians</strong> and <strong>200 customer jobs</strong> spread across a city. Each technician has different skills, working hours, and a starting location. Each job requires a specific skill, fits within a time window, and takes a different amount of time to complete.
+      </p>
+      <p class="lang-ar">
+        تخيّل شركة صيانة لديها <strong>٣٠ فنياً</strong> و<strong>٢٠٠ مهمة</strong> موزّعة على المدينة. كل فني له مهارات مختلفة، وساعات عمل، وموقع انطلاق. وكل مهمة تتطلب مهارة محددة، وتقع ضمن نافذة زمنية، وتستغرق وقتاً مختلفاً.
+      </p>
+
+      <p class="pull-quote">
+        <span class="lang-en">"Who goes where? When? In what order?"</span>
+        <span class="lang-ar">«مَن يذهب إلى أين؟ متى؟ وبأي ترتيب؟»</span>
+      </p>
+
+      <p class="lang-en">
+        This is the heart of <strong>Field Workforce Scheduling (FWS)</strong>: a generalization of the classic <em>Vehicle Routing Problem with Time Windows (VRPTW)</em>, augmented with skills, priorities, and resource constraints. It belongs to the class of <strong>NP-hard combinatorial optimization problems</strong> — meaning no known algorithm can solve every instance optimally in polynomial time.
+      </p>
+      <p class="lang-ar">
+        هذي هي جوهر مشكلة <strong>Field Workforce Scheduling (FWS)</strong>: تعميم لمشكلة <em>توجيه المركبات بنوافذ زمنية (VRPTW)</em> الكلاسيكية، مع إضافة المهارات والأولويات وقيود الموارد. وتنتمي إلى فئة <strong>مسائل التحسين التوافقية NP-hard</strong> — أي لا توجد خوارزمية معروفة تحل كل الحالات بشكل مثالي في زمن متعدد الحدود.
+      </p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <span class="card-num">i.</span>
+        <div class="card-title">
+          <span class="lang-en">Inputs</span>
+          <span class="lang-ar">المدخلات</span>
+        </div>
+        <div class="card-sub">
+          <span class="lang-en">What we're given</span>
+          <span class="lang-ar">ما هو متاح</span>
+        </div>
+        <div class="card-body">
+          <span class="lang-en">A set of technicians (with skills, hours, locations) and a set of jobs (with required skills, durations, time windows, locations).</span>
+          <span class="lang-ar">مجموعة من الفنيين (بمهاراتهم وساعاتهم ومواقعهم) ومجموعة من المهام (بمهاراتها المطلوبة ومدّتها ونوافذها الزمنية ومواقعها).</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="card-num">ii.</span>
+        <div class="card-title">
+          <span class="lang-en">Decisions</span>
+          <span class="lang-ar">القرارات</span>
+        </div>
+        <div class="card-sub">
+          <span class="lang-en">What we choose</span>
+          <span class="lang-ar">ما نختاره</span>
+        </div>
+        <div class="card-body">
+          <span class="lang-en">For each job: which technician handles it, at what time, and in what sequence within their daily route.</span>
+          <span class="lang-ar">لكل مهمة: أي فني سيُنفّذها، وفي أي وقت، وبأي ترتيب ضمن مسار يومه.</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <span class="card-num">iii.</span>
+        <div class="card-title">
+          <span class="lang-en">Objective</span>
+          <span class="lang-ar">الهدف</span>
+        </div>
+        <div class="card-sub">
+          <span class="lang-en">What we optimize</span>
+          <span class="lang-ar">ما نسعى لتحسينه</span>
+        </div>
+        <div class="card-body">
+          <span class="lang-en">Minimize total cost (travel time, overtime, unassigned jobs) — or maximize jobs completed and customer satisfaction.</span>
+          <span class="lang-ar">تقليل التكلفة الإجمالية (وقت التنقل، الساعات الإضافية، المهام غير المُسندة) — أو زيادة المهام المُنجزة ورضا العملاء.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MATHEMATICAL FORMULATION -->
+<section id="math">
+  <div class="page">
+    <div class="section-header">
+      <div class="section-num">02</div>
+      <div class="section-title">
+        <div class="kicker">
+          <span class="lang-en">Chapter two</span>
+          <span class="lang-ar">الفصل الثاني</span>
+        </div>
+        <h2>
+          <span class="lang-en">Translating reality into math.</span>
+          <span class="lang-ar">من الواقع إلى الرياضيات.</span>
+        </h2>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p class="lang-en">
+        Before any algorithm can solve our problem, we must <strong>translate it into mathematical language</strong>. This is the most important skill in operations research: turning a messy real-world situation into a precise formulation.
+      </p>
+      <p class="lang-ar">
+        قبل أن تحلّ أي خوارزمية مشكلتنا، يجب علينا <strong>ترجمتها إلى لغة رياضية</strong>. هذي أهم مهارة في بحوث العمليات: تحويل موقف واقعي معقد إلى صياغة دقيقة.
+      </p>
+    </div>
+
+    <div class="math-block">
+      <span class="math-label">Sets · المجموعات</span>
+      <span class="math-line"><span class="var">T</span> <span class="op">=</span> { 1, 2, ..., n } &nbsp;<span class="math-comment">// set of technicians</span></span>
+      <span class="math-line"><span class="var">J</span> <span class="op">=</span> { 1, 2, ..., m } &nbsp;<span class="math-comment">// set of jobs</span></span>
+      <span class="math-line"><span class="var">S</span> <span class="op">=</span> { 1, 2, ..., k } &nbsp;<span class="math-comment">// set of skills</span></span>
+    </div>
+
+    <div class="math-block">
+      <span class="math-label">Decision variables · متغيرات القرار</span>
+      <span class="math-line"><span class="var">x</span><sub>ij</sub> <span class="op">∈</span> {0, 1} &nbsp;<span class="math-comment">// 1 if technician i is assigned to job j</span></span>
+      <span class="math-line"><span class="var">s</span><sub>j</sub> <span class="op">≥</span> 0 &nbsp;<span class="math-comment">// start time of job j</span></span>
+      <span class="math-line"><span class="var">y</span><sub>ijk</sub> <span class="op">∈</span> {0, 1} &nbsp;<span class="math-comment">// 1 if technician i goes from job j to job k</span></span>
+    </div>
+
+    <div class="math-block">
+      <span class="math-label">Objective function · دالة الهدف</span>
+      <span class="math-line"><span class="op">minimize</span> &nbsp; <span class="var">Σ</span><sub>i ∈ T</sub> <span class="var">Σ</span><sub>j,k ∈ J</sub> &nbsp;c<sub>jk</sub> · <span class="var">y</span><sub>ijk</sub> &nbsp;<span class="op">+</span>&nbsp; <span class="var">Σ</span><sub>j ∈ J</sub> p<sub>j</sub> · (1 <span class="op">−</span> <span class="var">Σ</span><sub>i</sub> <span class="var">x</span><sub>ij</sub>)</span>
+      <span class="math-line"><span class="math-comment">// minimize: travel cost + penalty for unassigned jobs</span></span>
+    </div>
+
+    <div class="math-block">
+      <span class="math-label">Subject to · بالقيود</span>
+      <span class="math-line">(1) &nbsp; <span class="var">Σ</span><sub>i ∈ T</sub> <span class="var">x</span><sub>ij</sub> <span class="op">≤</span> 1 &nbsp;∀ j <span class="op">∈</span> J &nbsp;<span class="math-comment">// each job assigned at most once</span></span>
+      <span class="math-line">(2) &nbsp; <span class="var">x</span><sub>ij</sub> <span class="op">≤</span> a<sub>ij</sub> &nbsp;∀ i, j &nbsp;<span class="math-comment">// technician must have required skill</span></span>
+      <span class="math-line">(3) &nbsp; e<sub>j</sub> <span class="op">≤</span> <span class="var">s</span><sub>j</sub> <span class="op">≤</span> l<sub>j</sub> &nbsp;∀ j &nbsp;<span class="math-comment">// time window constraint</span></span>
+      <span class="math-line">(4) &nbsp; <span class="var">s</span><sub>k</sub> <span class="op">≥</span> <span class="var">s</span><sub>j</sub> <span class="op">+</span> d<sub>j</sub> <span class="op">+</span> t<sub>jk</sub> &nbsp;if <span class="var">y</span><sub>ijk</sub> <span class="op">=</span> 1 &nbsp;<span class="math-comment">// travel time between jobs</span></span>
+      <span class="math-line">(5) &nbsp; <span class="var">Σ</span><sub>j</sub> d<sub>j</sub> · <span class="var">x</span><sub>ij</sub> <span class="op">≤</span> H<sub>i</sub> &nbsp;∀ i &nbsp;<span class="math-comment">// max working hours per technician</span></span>
+    </div>
+
+    <div class="prose">
+      <p class="lang-en">
+        Now we have a <strong>Mixed Integer Linear Program (MILP)</strong>. Solvers like <code>Gurobi</code>, <code>CPLEX</code>, or open-source <code>OR-Tools CP-SAT</code> can take this formulation and search for an optimal — or near-optimal — solution.
+      </p>
+      <p class="lang-ar">
+        الآن لدينا <strong>برنامج خطي عدد صحيح مختلط (MILP)</strong>. الحلّالات مثل <code>Gurobi</code>، أو <code>CPLEX</code>، أو <code>OR-Tools CP-SAT</code> مفتوح المصدر يمكنها أن تأخذ هذه الصياغة وتبحث عن حلّ أمثل — أو شبه أمثل.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- CONSTRAINTS -->
+<section id="constraints">
+  <div class="page">
+    <div class="section-header">
+      <div class="section-num">03</div>
+      <div class="section-title">
+        <div class="kicker">
+          <span class="lang-en">Chapter three</span>
+          <span class="lang-ar">الفصل الثالث</span>
+        </div>
+        <h2>
+          <span class="lang-en">Hard versus soft constraints.</span>
+          <span class="lang-ar">قيود صارمة وقيود ليّنة.</span>
+        </h2>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p class="lang-en">
+        Constraints come in two flavors. <strong>Hard constraints</strong> must never be violated — a plumber cannot fix a wiring fault. <strong>Soft constraints</strong> are preferences we'd like to honor but can sacrifice if they conflict — preferring morning appointments, or balancing workload across technicians.
+      </p>
+      <p class="lang-ar">
+        القيود نوعان. <strong>القيود الصارمة (Hard)</strong> لا يجوز كسرها أبداً — السبّاك لا يمكنه إصلاح عطل كهربائي. <strong>القيود اللينة (Soft)</strong> هي تفضيلات نحب الالتزام بها، لكن يمكن التضحية بها عند التعارض — كتفضيل المواعيد الصباحية، أو موازنة الحمل بين الفنيين.
+      </p>
+    </div>
+
+    <div class="constraint-list">
+      <div class="constraint-row">
+        <div class="constraint-num">i</div>
+        <div class="constraint-content">
+          <div class="constraint-name">
+            <span class="lang-en">Skill matching</span>
+            <span class="lang-ar">مطابقة المهارات</span>
+          </div>
+          <div class="constraint-desc">
+            <span class="lang-en">Technician must possess the skill required by the job.</span>
+            <span class="lang-ar">يجب أن يمتلك الفني المهارة المطلوبة للمهمة.</span>
+          </div>
+        </div>
+        <div class="constraint-tag hard">
+          <span class="lang-en">Hard</span>
+          <span class="lang-ar">صارم</span>
+        </div>
+      </div>
+
+      <div class="constraint-row">
+        <div class="constraint-num">ii</div>
+        <div class="constraint-content">
+          <div class="constraint-name">
+            <span class="lang-en">Time windows</span>
+            <span class="lang-ar">النوافذ الزمنية</span>
+          </div>
+          <div class="constraint-desc">
+            <span class="lang-en">Job must start within its allowed window [earliest, latest].</span>
+            <span class="lang-ar">يجب بدء المهمة ضمن نافذتها الزمنية المسموحة.</span>
+          </div>
+        </div>
+        <div class="constraint-tag hard">
+          <span class="lang-en">Hard</span>
+          <span class="lang-ar">صارم</span>
+        </div>
+      </div>
+
+      <div class="constraint-row">
+        <div class="constraint-num">iii</div>
+        <div class="constraint-content">
+          <div class="constraint-name">
+            <span class="lang-en">Working hours</span>
+            <span class="lang-ar">ساعات العمل</span>
+          </div>
+          <div class="constraint-desc">
+            <span class="lang-en">Total daily work for each technician must not exceed their max hours.</span>
+            <span class="lang-ar">إجمالي ساعات العمل اليومية لكل فني لا يتجاوز الحد الأقصى.</span>
+          </div>
+        </div>
+        <div class="constraint-tag hard">
+          <span class="lang-en">Hard</span>
+          <span class="lang-ar">صارم</span>
+        </div>
+      </div>
+
+      <div class="constraint-row">
+        <div class="constraint-num">iv</div>
+        <div class="constraint-content">
+          <div class="constraint-name">
+            <span class="lang-en">Travel feasibility</span>
+            <span class="lang-ar">جدوى التنقل</span>
+          </div>
+          <div class="constraint-desc">
+            <span class="lang-en">Two consecutive jobs must allow enough time to travel between them.</span>
+            <span class="lang-ar">يجب أن يسمح الوقت بين مهمتين متتاليتين بالتنقل بينهما.</span>
+          </div>
+        </div>
+        <div class="constraint-tag hard">
+          <span class="lang-en">Hard</span>
+          <span class="lang-ar">صارم</span>
+        </div>
+      </div>
+
+      <div class="constraint-row">
+        <div class="constraint-num">v</div>
+        <div class="constraint-content">
+          <div class="constraint-name">
+            <span class="lang-en">Workload balance</span>
+            <span class="lang-ar">موازنة الحمل</span>
+          </div>
+          <div class="constraint-desc">
+            <span class="lang-en">Distribute jobs roughly evenly to prevent burnout and bottlenecks.</span>
+            <span class="lang-ar">توزيع المهام بشكل متوازن لتجنّب الإرهاق والاختناقات.</span>
+          </div>
+        </div>
+        <div class="constraint-tag soft">
+          <span class="lang-en">Soft</span>
+          <span class="lang-ar">ليّن</span>
+        </div>
+      </div>
+
+      <div class="constraint-row">
+        <div class="constraint-num">vi</div>
+        <div class="constraint-content">
+          <div class="constraint-name">
+            <span class="lang-en">Customer preference</span>
+            <span class="lang-ar">تفضيل العميل</span>
+          </div>
+          <div class="constraint-desc">
+            <span class="lang-en">Honor preferred technicians or appointment times when possible.</span>
+            <span class="lang-ar">احترام تفضيلات العميل في الفني أو الوقت كلما أمكن.</span>
+          </div>
+        </div>
+        <div class="constraint-tag soft">
+          <span class="lang-en">Soft</span>
+          <span class="lang-ar">ليّن</span>
+        </div>
+      </div>
+
+      <div class="constraint-row">
+        <div class="constraint-num">vii</div>
+        <div class="constraint-content">
+          <div class="constraint-name">
+            <span class="lang-en">Priority weighting</span>
+            <span class="lang-ar">ترجيح الأولوية</span>
+          </div>
+          <div class="constraint-desc">
+            <span class="lang-en">Higher-priority jobs (emergencies, SLA breaches) get scheduled first.</span>
+            <span class="lang-ar">المهام عالية الأولوية (الطوارئ، انتهاكات اتفاقيات الخدمة) تُجدول أولاً.</span>
+          </div>
+        </div>
+        <div class="constraint-tag soft">
+          <span class="lang-en">Soft</span>
+          <span class="lang-ar">ليّن</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ALGORITHMS -->
+<section id="algorithms">
+  <div class="page">
+    <div class="section-header">
+      <div class="section-num">04</div>
+      <div class="section-title">
+        <div class="kicker">
+          <span class="lang-en">Chapter four</span>
+          <span class="lang-ar">الفصل الرابع</span>
+        </div>
+        <h2>
+          <span class="lang-en">Four ways AI tackles the problem.</span>
+          <span class="lang-ar">أربع طرق يعالج بها الذكاء الاصطناعي المشكلة.</span>
+        </h2>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p class="lang-en">
+        No single algorithm dominates. Real-world systems combine several techniques — exact methods for clean sub-problems, metaheuristics for the messy whole, and machine learning for forecasting and adaptation.
+      </p>
+      <p class="lang-ar">
+        لا توجد خوارزمية واحدة تتفوّق على الجميع. الأنظمة الحقيقية تدمج عدة تقنيات — طرق دقيقة للمشاكل الفرعية الصغيرة، وخوارزميات استدلالية للمشكلة الكاملة، وتعلّم آلي للتنبؤ والتكيّف.
+      </p>
+    </div>
+
+    <div class="algo-grid">
+      <div class="algo-card">
+        <div class="algo-icon">i</div>
+        <h3>
+          <span class="lang-en">Constraint Programming</span>
+          <span class="lang-ar">البرمجة بالقيود</span>
+        </h3>
+        <div class="algo-method">
+          <span class="lang-en">CP-SAT · MILP · Branch & bound</span>
+          <span class="lang-ar">CP-SAT · MILP · فروع وحدود</span>
+        </div>
+        <div class="algo-desc">
+          <span class="lang-en">Encodes constraints directly into a solver. Finds provably optimal solutions when they exist. Best for medium problems (up to ~500 jobs).</span>
+          <span class="lang-ar">يُدخل القيود مباشرة في الحلّال. يجد حلولاً مثالية مُثبتة عند وجودها. الأنسب للمشاكل المتوسطة (حتى ٥٠٠ مهمة تقريباً).</span>
+        </div>
+        <div class="algo-stats">
+          <div class="algo-stat">
+            <span class="stat-label">
+              <span class="lang-en">Speed</span><span class="lang-ar">السرعة</span>
+            </span>
+            <span class="stat-val">★★★☆☆</span>
+          </div>
+          <div class="algo-stat">
+            <span class="stat-label">
+              <span class="lang-en">Quality</span><span class="lang-ar">الجودة</span>
+            </span>
+            <span class="stat-val">★★★★★</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="algo-card">
+        <div class="algo-icon">ii</div>
+        <h3>
+          <span class="lang-en">Metaheuristics</span>
+          <span class="lang-ar">الخوارزميات الاستدلالية</span>
+        </h3>
+        <div class="algo-method">
+          <span class="lang-en">Genetic · Tabu · Simulated annealing</span>
+          <span class="lang-ar">جينية · تابو · تلدين محاكى</span>
+        </div>
+        <div class="algo-desc">
+          <span class="lang-en">Smart trial-and-error guided by intuition from biology and physics. Scales to thousands of jobs but offers no optimality guarantee.</span>
+          <span class="lang-ar">تجربة وخطأ ذكية مستوحاة من البيولوجيا والفيزياء. تتوسّع لآلاف المهام لكن دون ضمان مثالية الحل.</span>
+        </div>
+        <div class="algo-stats">
+          <div class="algo-stat">
+            <span class="stat-label">
+              <span class="lang-en">Speed</span><span class="lang-ar">السرعة</span>
+            </span>
+            <span class="stat-val">★★★★★</span>
+          </div>
+          <div class="algo-stat">
+            <span class="stat-label">
+              <span class="lang-en">Quality</span><span class="lang-ar">الجودة</span>
+            </span>
+            <span class="stat-val">★★★★☆</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="algo-card">
+        <div class="algo-icon">iii</div>
+        <h3>
+          <span class="lang-en">Machine Learning</span>
+          <span class="lang-ar">تعلّم الآلة</span>
+        </h3>
+        <div class="algo-method">
+          <span class="lang-en">XGBoost · Neural networks · Time-series</span>
+          <span class="lang-ar">XGBoost · شبكات عصبية · سلاسل زمنية</span>
+        </div>
+        <div class="algo-desc">
+          <span class="lang-en">Learns from history to predict job duration, no-shows, and traffic. Doesn't schedule directly — feeds richer estimates into the optimizer.</span>
+          <span class="lang-ar">يتعلّم من التاريخ ليتنبّأ بمدة المهام والغياب والازدحام. لا يُجدول مباشرة — لكنه يُغذّي المُحسّن بتقديرات أدق.</span>
+        </div>
+        <div class="algo-stats">
+          <div class="algo-stat">
+            <span class="stat-label">
+              <span class="lang-en">Role</span><span class="lang-ar">الدور</span>
+            </span>
+            <span class="stat-val">
+              <span class="lang-en">Predictive</span>
+              <span class="lang-ar">تنبؤي</span>
+            </span>
+          </div>
+          <div class="algo-stat">
+            <span class="stat-label">
+              <span class="lang-en">Pairs with</span><span class="lang-ar">يقترن مع</span>
+            </span>
+            <span class="stat-val">CP / GA</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="algo-card">
+        <div class="algo-icon">iv</div>
+        <h3>
+          <span class="lang-en">Reinforcement Learning</span>
+          <span class="lang-ar">التعلّم المعزّز</span>
+        </h3>
+        <div class="algo-method">
+          <span class="lang-en">Deep Q-Networks · PPO · Actor-Critic</span>
+          <span class="lang-ar">شبكات Q عميقة · PPO · ممثل-ناقد</span>
+        </div>
+        <div class="algo-desc">
+          <span class="lang-en">An agent learns dispatching policy from millions of simulated days. Excels at dynamic scheduling — emergencies arriving mid-day, cancellations, traffic.</span>
+          <span class="lang-ar">عميل يتعلّم سياسة التوزيع من ملايين الأيام المُحاكاة. يتفوّق في الجدولة الديناميكية — الطوارئ المفاجئة، الإلغاءات، الازدحام.</span>
+        </div>
+        <div class="algo-stats">
+          <div class="algo-stat">
+            <span class="stat-label">
+              <span class="lang-en">Best for</span><span class="lang-ar">الأنسب لـ</span>
+            </span>
+            <span class="stat-val">
+              <span class="lang-en">Dynamic</span>
+              <span class="lang-ar">ديناميكي</span>
+            </span>
+          </div>
+          <div class="algo-stat">
+            <span class="stat-label">
+              <span class="lang-en">Cost</span><span class="lang-ar">الكُلفة</span>
+            </span>
+            <span class="stat-val">
+              <span class="lang-en">Training-heavy</span>
+              <span class="lang-ar">تدريب مكثّف</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SIMULATORS -->
+<section id="simulators">
+  <div class="page">
+    <div class="section-header">
+      <div class="section-num">05</div>
+      <div class="section-title">
+        <div class="kicker">
+          <span class="lang-en">Chapter five</span>
+          <span class="lang-ar">الفصل الخامس</span>
+        </div>
+        <h2>
+          <span class="lang-en">Try it yourself.</span>
+          <span class="lang-ar">جرّبها بنفسك.</span>
+        </h2>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p class="lang-en">
+        Three interactive simulators to build intuition. Move the sliders, watch the schedules form, and see how AI decisions ripple across the system.
+      </p>
+      <p class="lang-ar">
+        ثلاثة محاكيات تفاعلية لبناء الحدس. حرّك المنزلقات، وشاهد الجداول تتكوّن، ولاحظ كيف تنتشر قرارات الذكاء الاصطناعي عبر النظام.
+      </p>
+    </div>
+
+    <div class="sim-container">
+      <div class="sim-header">
+        <div class="sim-title" id="sim-title">
+          <span class="lang-en">Combinatorial complexity</span>
+          <span class="lang-ar">التعقيد التوافقي</span>
+        </div>
+        <div class="sim-tabs">
+          <button class="sim-tab active" data-panel="complexity" onclick="switchSim('complexity')">
+            <span class="lang-en">Complexity</span>
+            <span class="lang-ar">التعقيد</span>
+          </button>
+          <button class="sim-tab" data-panel="vrp" onclick="switchSim('vrp')">
+            <span class="lang-en">VRP Map</span>
+            <span class="lang-ar">خريطة VRP</span>
+          </button>
+          <button class="sim-tab" data-panel="constraints" onclick="switchSim('constraints')">
+            <span class="lang-en">Constraints</span>
+            <span class="lang-ar">القيود</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- PANEL 1: Complexity -->
+      <div class="sim-panel active" id="panel-complexity">
+        <div class="sim-controls">
+          <div class="sim-control">
+            <label>
+              <span>
+                <span class="lang-en">Technicians</span>
+                <span class="lang-ar">الفنيون</span>
+              </span>
+              <span class="val" id="cx-tech-val">5</span>
+            </label>
+            <input type="range" min="2" max="30" value="5" id="cx-tech">
+          </div>
+          <div class="sim-control">
+            <label>
+              <span>
+                <span class="lang-en">Jobs</span>
+                <span class="lang-ar">المهام</span>
+              </span>
+              <span class="val" id="cx-jobs-val">20</span>
+            </label>
+            <input type="range" min="5" max="200" value="20" id="cx-jobs">
+          </div>
+        </div>
+
+        <div class="sim-canvas-wrap">
+          <canvas id="cx-canvas" width="1000" height="280" style="width: 100%; height: auto;"></canvas>
+        </div>
+
+        <div class="sim-stats">
+          <div class="sim-stat">
+            <div class="sim-stat-label">
+              <span class="lang-en">Possibilities</span>
+              <span class="lang-ar">الاحتمالات</span>
+            </div>
+            <div class="sim-stat-val" id="cx-poss">—</div>
+          </div>
+          <div class="sim-stat">
+            <div class="sim-stat-label">
+              <span class="lang-en">Brute force</span>
+              <span class="lang-ar">قوة غاشمة</span>
+            </div>
+            <div class="sim-stat-val warn" id="cx-brute">—</div>
+          </div>
+          <div class="sim-stat">
+            <div class="sim-stat-label">
+              <span class="lang-en">AI solver</span>
+              <span class="lang-ar">حلّال AI</span>
+            </div>
+            <div class="sim-stat-val success" id="cx-ai">—</div>
+          </div>
+          <div class="sim-stat">
+            <div class="sim-stat-label">
+              <span class="lang-en">Speedup</span>
+              <span class="lang-ar">التسريع</span>
+            </div>
+            <div class="sim-stat-val" id="cx-speedup">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL 2: VRP Map -->
+      <div class="sim-panel" id="panel-vrp">
+        <div class="sim-controls">
+          <div class="sim-control">
+            <label>
+              <span>
+                <span class="lang-en">Customer count</span>
+                <span class="lang-ar">عدد العملاء</span>
+              </span>
+              <span class="val" id="vrp-jobs-val">12</span>
+            </label>
+            <input type="range" min="6" max="30" value="12" id="vrp-jobs">
+          </div>
+          <div class="sim-control">
+            <label>
+              <span>
+                <span class="lang-en">Technician count</span>
+                <span class="lang-ar">عدد الفنيين</span>
+              </span>
+              <span class="val" id="vrp-tech-val">3</span>
+            </label>
+            <input type="range" min="1" max="6" value="3" id="vrp-tech">
+          </div>
+          <div class="sim-control" style="grid-column: 1 / -1;">
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+              <button class="btn secondary" onclick="vrpRegenerate()">
+                <span class="lang-en">⟲ Regenerate map</span>
+                <span class="lang-ar">⟲ خريطة جديدة</span>
+              </button>
+              <button class="btn" onclick="vrpSolve()">
+                <span class="lang-en">▶ Solve with AI</span>
+                <span class="lang-ar">▶ حلّ بالذكاء الاصطناعي</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="sim-canvas-wrap">
+          <canvas id="vrp-canvas" width="1000" height="500" style="width: 100%; height: auto;"></canvas>
+        </div>
+
+        <div class="sim-stats">
+          <div class="sim-stat">
+            <div class="sim-stat-label">
+              <span class="lang-en">Total distance</span>
+              <span class="lang-ar">المسافة الإجمالية</span>
+            </div>
+            <div class="sim-stat-val" id="vrp-dist">—</div>
+          </div>
+          <div class="sim-stat">
+            <div class="sim-stat-label">
+              <span class="lang-en">Solve time</span>
+              <span class="lang-ar">زمن الحل</span>
+            </div>
+            <div class="sim-stat-val success" id="vrp-time">—</div>
+          </div>
+          <div class="sim-stat">
+            <div class="sim-stat-label">
+              <span class="lang-en">Iterations</span>
+              <span class="lang-ar">التكرارات</span>
+            </div>
+            <div class="sim-stat-val" id="vrp-iter">—</div>
+          </div>
+          <div class="sim-stat">
+            <div class="sim-stat-label">
+              <span class="lang-en">Algorithm</span>
+              <span class="lang-ar">الخوارزمية</span>
+            </div>
+            <div class="sim-stat-val">
+              <span style="font-size: 14px;">Nearest + 2-opt</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANEL 3: Constraint impact -->
+      <div class="sim-panel" id="panel-constraints">
+        <div class="sim-controls">
+          <div class="sim-control">
+            <label>
+              <span>
+                <span class="lang-en">Skill match strictness</span>
+                <span class="lang-ar">صرامة المهارات</span>
+              </span>
+              <span class="val" id="cn-skill-val">50%</span>
+            </label>
+            <input type="range" min="0" max="100" value="50" id="cn-skill">
+          </div>
+          <div class="sim-control">
+            <label>
+              <span>
+                <span class="lang-en">Time window tightness</span>
+                <span class="lang-ar">ضيق النوافذ الزمنية</span>
+              </span>
+              <span class="val" id="cn-time-val">50%</span>
+            </label>
+            <input type="range" min="0" max="100" value="50" id="cn-time">
+          </div>
+          <div class="sim-control">
+            <label>
+              <span>
+                <span class="lang-en">Workload balance weight</span>
+                <span class="lang-ar">وزن موازنة الحمل</span>
+              </span>
+              <span class="val" id="cn-bal-val">50%</span>
+            </label>
+            <input type="range" min="0" max="100" value="50" id="cn-bal">
+          </div>
+        </div>
+
+        <div class="sim-canvas-wrap">
+          <canvas id="cn-canvas" width="1000" height="320" style="width: 100%; height: auto;"></canvas>
+        </div>
+
+        <div class="sim-stats">
+          <div class="sim-stat">
+            <div class="sim-stat-label">
+              <span class="lang-en">Jobs assigned</span>
+              <span class="lang-ar">المهام المُسنَدة</span>
+            </div>
+            <div class="sim-stat-val success" id="cn-assigned">—</div>
+          </div>
+          <div class="sim-stat">
+            <div class="sim-stat-label">
+              <span class="lang-en">Jobs unfeasible</span>
+              <span class="lang-ar">مهام غير قابلة</span>
+            </div>
+            <div class="sim-stat-val warn" id="cn-unfeas">—</div>
+          </div>
+          <div class="sim-stat">
+            <div class="sim-stat-label">
+              <span class="lang-en">Solution quality</span>
+              <span class="lang-ar">جودة الحل</span>
+            </div>
+            <div class="sim-stat-val" id="cn-quality">—</div>
+          </div>
+          <div class="sim-stat">
+            <div class="sim-stat-label">
+              <span class="lang-en">Imbalance</span>
+              <span class="lang-ar">عدم التوازن</span>
+            </div>
+            <div class="sim-stat-val" id="cn-imbal">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CODE -->
+<section id="code">
+  <div class="page">
+    <div class="section-header">
+      <div class="section-num">06</div>
+      <div class="section-title">
+        <div class="kicker">
+          <span class="lang-en">Chapter six</span>
+          <span class="lang-ar">الفصل السادس</span>
+        </div>
+        <h2>
+          <span class="lang-en">From theory to working code.</span>
+          <span class="lang-ar">من النظرية إلى كود يعمل.</span>
+        </h2>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p class="lang-en">
+        Below is a minimal but complete example using <strong>Google OR-Tools</strong> in Python. This code solves a small Field Workforce Scheduling instance with skills, time windows, and travel times.
+      </p>
+      <p class="lang-ar">
+        أدناه مثال صغير لكنه كامل باستخدام <strong>Google OR-Tools</strong> بلغة Python. هذا الكود يحلّ حالة صغيرة من جدولة القوى العاملة الميدانية مع المهارات والنوافذ الزمنية وأزمنة التنقل.
+      </p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-lang">Python · OR-Tools CP-SAT</div>
+        <button class="code-copy" onclick="copyCode(this)">
+          <span class="lang-en">Copy</span>
+          <span class="lang-ar">نسخ</span>
+        </button>
+      </div>
+<pre><code><span class="kw">from</span> ortools.sat.python <span class="kw">import</span> cp_model
+
+<span class="com"># --- Problem data ---</span>
+technicians = [<span class="str">"T1"</span>, <span class="str">"T2"</span>, <span class="str">"T3"</span>]
+jobs = [
+    <span class="com"># (id, skill, duration_min, earliest, latest)</span>
+    (<span class="str">"J1"</span>, <span class="str">"plumb"</span>, <span class="num">60</span>,  <span class="num">540</span>, <span class="num">720</span>),   <span class="com"># 9:00–12:00</span>
+    (<span class="str">"J2"</span>, <span class="str">"elec"</span>,  <span class="num">90</span>,  <span class="num">600</span>, <span class="num">780</span>),
+    (<span class="str">"J3"</span>, <span class="str">"plumb"</span>, <span class="num">45</span>,  <span class="num">660</span>, <span class="num">900</span>),
+    (<span class="str">"J4"</span>, <span class="str">"hvac"</span>,  <span class="num">120</span>, <span class="num">540</span>, <span class="num">840</span>),
+]
+skills = {<span class="str">"T1"</span>: [<span class="str">"plumb"</span>], <span class="str">"T2"</span>: [<span class="str">"elec"</span>, <span class="str">"hvac"</span>], <span class="str">"T3"</span>: [<span class="str">"plumb"</span>, <span class="str">"hvac"</span>]}
+
+<span class="com"># --- Build the model ---</span>
+model = cp_model.CpModel()
+
+<span class="com"># Decision variables</span>
+x = {}  <span class="com"># x[j, t] = 1 if job j assigned to tech t</span>
+start = {}  <span class="com"># start time of job j</span>
+
+<span class="kw">for</span> j_id, skill, dur, e, l <span class="kw">in</span> jobs:
+    start[j_id] = model.<span class="fn">NewIntVar</span>(e, l, <span class="str">f"start_{j_id}"</span>)
+    <span class="kw">for</span> t <span class="kw">in</span> technicians:
+        x[j_id, t] = model.<span class="fn">NewBoolVar</span>(<span class="str">f"x_{j_id}_{t}"</span>)
+        <span class="com"># Skill matching constraint</span>
+        <span class="kw">if</span> skill <span class="kw">not</span> <span class="kw">in</span> skills[t]:
+            model.<span class="fn">Add</span>(x[j_id, t] == <span class="num">0</span>)
+
+<span class="com"># Each job assigned to exactly one technician</span>
+<span class="kw">for</span> j_id, _, _, _, _ <span class="kw">in</span> jobs:
+    model.<span class="fn">Add</span>(<span class="fn">sum</span>(x[j_id, t] <span class="kw">for</span> t <span class="kw">in</span> technicians) == <span class="num">1</span>)
+
+<span class="com"># --- Solve ---</span>
+solver = cp_model.CpSolver()
+solver.parameters.max_time_in_seconds = <span class="num">10.0</span>
+status = solver.<span class="fn">Solve</span>(model)
+
+<span class="kw">if</span> status == cp_model.OPTIMAL:
+    <span class="kw">for</span> j_id, _, _, _, _ <span class="kw">in</span> jobs:
+        <span class="kw">for</span> t <span class="kw">in</span> technicians:
+            <span class="kw">if</span> solver.<span class="fn">Value</span>(x[j_id, t]):
+                <span class="fn">print</span>(<span class="str">f"{j_id} → {t} at minute {solver.Value(start[j_id])}"</span>)</code></pre>
+    </div>
+
+    <div class="prose">
+      <p class="lang-en">
+        And here's a <strong>genetic algorithm</strong> approach in pure Python — no external libraries — to give you a feel for how metaheuristics search the solution space.
+      </p>
+      <p class="lang-ar">
+        وأدناه نهج <strong>الخوارزمية الجينية</strong> بلغة Python نقية — بدون مكتبات خارجية — لتذوّق كيف تبحث الخوارزميات الاستدلالية في فضاء الحلول.
+      </p>
+    </div>
+
+    <div class="code-block">
+      <div class="code-header">
+        <div class="code-lang">Python · Genetic Algorithm</div>
+        <button class="code-copy" onclick="copyCode(this)">
+          <span class="lang-en">Copy</span>
+          <span class="lang-ar">نسخ</span>
+        </button>
+      </div>
+<pre><code><span class="kw">import</span> random
+
+<span class="kw">def</span> <span class="fn">fitness</span>(chromosome, jobs, distances):
+    <span class="com"># Lower is better: total travel + penalty for unassigned jobs</span>
+    total = <span class="num">0</span>
+    <span class="kw">for</span> tech_route <span class="kw">in</span> chromosome:
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(tech_route) - <span class="num">1</span>):
+            total += distances[tech_route[i]][tech_route[i+<span class="num">1</span>]]
+    <span class="kw">return</span> total
+
+<span class="kw">def</span> <span class="fn">crossover</span>(parent1, parent2):
+    <span class="com"># One-point crossover between two solutions</span>
+    cut = <span class="fn">random.randint</span>(<span class="num">1</span>, <span class="fn">len</span>(parent1) - <span class="num">1</span>)
+    <span class="kw">return</span> parent1[:cut] + parent2[cut:]
+
+<span class="kw">def</span> <span class="fn">mutate</span>(chromosome, rate=<span class="num">0.1</span>):
+    <span class="com"># Swap two random jobs between technicians</span>
+    <span class="kw">if</span> <span class="fn">random.random</span>() < rate:
+        a, b = <span class="fn">random.sample</span>(<span class="fn">range</span>(<span class="fn">len</span>(chromosome)), <span class="num">2</span>)
+        chromosome[a], chromosome[b] = chromosome[b], chromosome[a]
+    <span class="kw">return</span> chromosome
+
+<span class="kw">def</span> <span class="fn">genetic_algorithm</span>(jobs, distances, generations=<span class="num">500</span>, pop_size=<span class="num">100</span>):
+    <span class="com"># Initial random population</span>
+    population = [<span class="fn">random_solution</span>(jobs) <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(pop_size)]
+    
+    <span class="kw">for</span> gen <span class="kw">in</span> <span class="fn">range</span>(generations):
+        <span class="com"># Evaluate fitness</span>
+        scored = [(<span class="fn">fitness</span>(c, jobs, distances), c) <span class="kw">for</span> c <span class="kw">in</span> population]
+        scored.<span class="fn">sort</span>()
+        
+        <span class="com"># Select top 50% as parents</span>
+        parents = [c <span class="kw">for</span> _, c <span class="kw">in</span> scored[:pop_size // <span class="num">2</span>]]
+        
+        <span class="com"># Create next generation via crossover and mutation</span>
+        next_gen = parents[:]
+        <span class="kw">while</span> <span class="fn">len</span>(next_gen) < pop_size:
+            p1, p2 = <span class="fn">random.sample</span>(parents, <span class="num">2</span>)
+            child = <span class="fn">mutate</span>(<span class="fn">crossover</span>(p1, p2))
+            next_gen.<span class="fn">append</span>(child)
+        
+        population = next_gen
+    
+    <span class="kw">return</span> <span class="fn">min</span>(population, key=<span class="kw">lambda</span> c: <span class="fn">fitness</span>(c, jobs, distances))</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- EXAMPLES -->
+<section id="examples">
+  <div class="page">
+    <div class="section-header">
+      <div class="section-num">07</div>
+      <div class="section-title">
+        <div class="kicker">
+          <span class="lang-en">Chapter seven</span>
+          <span class="lang-ar">الفصل السابع</span>
+        </div>
+        <h2>
+          <span class="lang-en">In the wild.</span>
+          <span class="lang-ar">في الواقع.</span>
+        </h2>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p class="lang-en">
+        These aren't textbook problems — they're systems running today, dispatching workers and saving billions in fuel and labor.
+      </p>
+      <p class="lang-ar">
+        هذي ليست مشاكل في كتاب مدرسي — بل أنظمة تعمل اليوم، توزّع العمالة وتوفّر مليارات في الوقود والأجور.
+      </p>
+    </div>
+
+    <div class="example-grid">
+      <div class="example-card">
+        <div class="ex-header">
+          <div class="ex-company">UPS · ORION</div>
+          <div class="ex-tag">
+            <span class="lang-en">Last-mile delivery</span>
+            <span class="lang-ar">التوصيل النهائي</span>
+          </div>
+        </div>
+        <div class="ex-body">
+          <span class="lang-en">UPS's On-Road Integrated Optimization and Navigation system reroutes 55,000 drivers daily using a custom branch-and-bound solver.</span>
+          <span class="lang-ar">نظام التوجيه والتحسين المتكامل في UPS يُعيد توجيه ٥٥٠٠٠ سائق يومياً باستخدام حلّال branch-and-bound مُخصّص.</span>
+        </div>
+        <div class="ex-stat">
+          <span class="ex-stat-label">
+            <span class="lang-en">Annual saving</span>
+            <span class="lang-ar">التوفير السنوي</span>
+          </span>
+          <span class="ex-stat-val">100M mi</span>
+        </div>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-header">
+          <div class="ex-company">Uber · Marketplace</div>
+          <div class="ex-tag">
+            <span class="lang-en">Real-time matching</span>
+            <span class="lang-ar">المطابقة الفورية</span>
+          </div>
+        </div>
+        <div class="ex-body">
+          <span class="lang-en">Uber's marketplace solves a continuous online assignment problem — matching riders to drivers in milliseconds while respecting surge zones and ETAs.</span>
+          <span class="lang-ar">سوق Uber يحلّ مشكلة إسناد مستمرة — مطابقة الركاب بالسائقين في أجزاء من الثانية مع مراعاة مناطق الزيادة وأوقات الوصول.</span>
+        </div>
+        <div class="ex-stat">
+          <span class="ex-stat-label">
+            <span class="lang-en">Decisions / sec</span>
+            <span class="lang-ar">قرار / ثانية</span>
+          </span>
+          <span class="ex-stat-val">15,000+</span>
+        </div>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-header">
+          <div class="ex-company">Aramco</div>
+          <div class="ex-tag">
+            <span class="lang-en">Field maintenance</span>
+            <span class="lang-ar">صيانة الحقول</span>
+          </div>
+        </div>
+        <div class="ex-body">
+          <span class="lang-en">Saudi Aramco schedules maintenance crews across thousands of wells and pipelines using hybrid CP-SAT and machine learning forecasts.</span>
+          <span class="lang-ar">أرامكو السعودية تُجدول فرق الصيانة عبر آلاف الآبار وخطوط الأنابيب باستخدام CP-SAT الهجين وتنبؤات تعلّم الآلة.</span>
+        </div>
+        <div class="ex-stat">
+          <span class="ex-stat-label">
+            <span class="lang-en">Sites managed</span>
+            <span class="lang-ar">المواقع المُدارة</span>
+          </span>
+          <span class="ex-stat-val">10K+</span>
+        </div>
+      </div>
+
+      <div class="example-card">
+        <div class="ex-header">
+          <div class="ex-company">STC</div>
+          <div class="ex-tag">
+            <span class="lang-en">Telecom installs</span>
+            <span class="lang-ar">تركيبات الاتصالات</span>
+          </div>
+        </div>
+        <div class="ex-body">
+          <span class="lang-en">Saudi Telecom dispatches fiber installation and repair crews across the Kingdom, balancing skill mix with citizen-facing SLAs.</span>
+          <span class="lang-ar">الاتصالات السعودية توزّع فرق تركيب وإصلاح الألياف عبر المملكة، موازنةً بين تنوّع المهارات واتفاقيات الخدمة مع المواطنين.</span>
+        </div>
+        <div class="ex-stat">
+          <span class="ex-stat-label">
+            <span class="lang-en">Daily jobs</span>
+            <span class="lang-ar">المهام اليومية</span>
+          </span>
+          <span class="ex-stat-val">8K+</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="quiz">
+  <div class="page">
+    <div class="section-header">
+      <div class="section-num">08</div>
+      <div class="section-title">
+        <div class="kicker">
+          <span class="lang-en">Chapter eight</span>
+          <span class="lang-ar">الفصل الثامن</span>
+        </div>
+        <h2>
+          <span class="lang-en">Test your understanding.</span>
+          <span class="lang-ar">اختبر فهمك.</span>
+        </h2>
+      </div>
+    </div>
+
+    <div class="prose">
+      <p class="lang-en">
+        Six questions, ranging from concept to application. Pick an answer to see whether it's correct — and why.
+      </p>
+      <p class="lang-ar">
+        ست أسئلة، من المفاهيم إلى التطبيق. اختر إجابة لترى إن كانت صحيحة — ولماذا.
+      </p>
+    </div>
+
+    <div class="quiz-container" id="quiz-container">
+      <!-- populated by JS -->
+    </div>
+
+    <div class="quiz-summary" id="quiz-summary">
+      <div class="score-num" id="score-num">0</div>
+      <div class="score-label">
+        <span class="lang-en">out of 6 correct</span>
+        <span class="lang-ar">من ٦ إجابات صحيحة</span>
+      </div>
+      <div class="score-msg" id="score-msg"></div>
+      <button class="btn secondary" style="background: rgba(255,255,255,0.1); color: var(--cream); border-color: rgba(255,255,255,0.2);" onclick="resetQuiz()">
+        <span class="lang-en">↻ Try again</span>
+        <span class="lang-ar">↻ حاول مجدداً</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="page">
+    <div class="footer-mark">
+      <span class="lang-en">Field Workforce Scheduling</span>
+      <span class="lang-ar">جدولة القوى العاملة الميدانية</span>
+    </div>
+    <div>
+      <span class="lang-en">An interactive lesson · Built for CS &amp; IE undergraduates</span>
+      <span class="lang-ar">درس تفاعلي · لطلاب الحاسب والهندسة الصناعية</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  /* =========================================================
+     LANGUAGE TOGGLE
+  ========================================================= */
+  function setLang(lang) {
+    document.body.dir = lang === 'ar' ? 'rtl' : 'ltr';
+    document.body.lang = lang;
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === lang);
+    });
+    // Re-render quiz in the new language
+    buildQuiz();
+    // Re-render simulators
+    drawComplexity();
+    drawVRP();
+    drawConstraints();
+  }
+
+  /* =========================================================
+     TOC SCROLLSPY
+  ========================================================= */
+  const tocDots = document.querySelectorAll('.toc-dot');
+  tocDots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      const target = document.getElementById(dot.dataset.section);
+      if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  function updateTOC() {
+    const sections = ['hero', 'problem', 'math', 'constraints', 'algorithms', 'simulators', 'code', 'examples', 'quiz'];
+    const scrollPos = window.scrollY + window.innerHeight / 2;
+    let activeIdx = 0;
+    sections.forEach((id, i) => {
+      const el = document.getElementById(id);
+      if (el && el.offsetTop <= scrollPos) activeIdx = i;
+    });
+    tocDots.forEach((dot, i) => dot.classList.toggle('active', i === activeIdx));
+  }
+  window.addEventListener('scroll', updateTOC);
+
+  /* =========================================================
+     SIMULATOR SWITCHING
+  ========================================================= */
+  function switchSim(panelId) {
+    document.querySelectorAll('.sim-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`[data-panel="${panelId}"]`).classList.add('active');
+    document.querySelectorAll('.sim-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(`panel-${panelId}`).classList.add('active');
+    // Trigger redraw of the now-visible panel
+    if (panelId === 'complexity') drawComplexity();
+    if (panelId === 'vrp') drawVRP();
+    if (panelId === 'constraints') drawConstraints();
+  }
+
+  /* =========================================================
+     SIMULATOR 1 — COMPLEXITY
+  ========================================================= */
+  const cxTech = document.getElementById('cx-tech');
+  const cxJobs = document.getElementById('cx-jobs');
+  const cxCanvas = document.getElementById('cx-canvas');
+
+  function logFactorial(n) {
+    if (n <= 1) return 0;
+    return n * Math.log10(n) - n * Math.log10(Math.E) + 0.5 * Math.log10(2 * Math.PI * n);
+  }
+
+  function formatBig(log10) {
+    if (log10 < 3) return Math.round(Math.pow(10, log10)).toString();
+    if (log10 < 6) return (Math.pow(10, log10) / 1e3).toFixed(1) + 'K';
+    if (log10 < 9) return (Math.pow(10, log10) / 1e6).toFixed(1) + 'M';
+    if (log10 < 12) return (Math.pow(10, log10) / 1e9).toFixed(1) + 'B';
+    if (log10 < 15) return (Math.pow(10, log10) / 1e12).toFixed(1) + 'T';
+    if (log10 < 18) return (Math.pow(10, log10) / 1e15).toFixed(1) + 'Q';
+    return '10^' + Math.round(log10);
+  }
+
+  function formatTime(seconds, lang) {
+    const isAr = lang === 'ar';
+    if (seconds < 1) return isAr ? '< ١ ث' : '< 1 sec';
+    if (seconds < 60) return Math.round(seconds) + (isAr ? ' ث' : ' sec');
+    if (seconds < 3600) return Math.round(seconds / 60) + (isAr ? ' دق' : ' min');
+    if (seconds < 86400) return Math.round(seconds / 3600) + (isAr ? ' سا' : ' hrs');
+    if (seconds < 31536000) return Math.round(seconds / 86400) + (isAr ? ' يوم' : ' days');
+    if (seconds < 31536000 * 1000) return Math.round(seconds / 31536000) + (isAr ? ' سنة' : ' yrs');
+    if (seconds < 31536000 * 1e6) return Math.round(seconds / 31536000 / 1000) + (isAr ? ' ألف سنة' : 'K yrs');
+    if (seconds < 31536000 * 1e9) return Math.round(seconds / 31536000 / 1e6) + (isAr ? ' مليون سنة' : 'M yrs');
+    return Math.round(seconds / 31536000 / 1e9) + (isAr ? ' مليار سنة' : 'B yrs');
+  }
+
+  function drawComplexity() {
+    const T = parseInt(cxTech.value);
+    const J = parseInt(cxJobs.value);
+    document.getElementById('cx-tech-val').textContent = T;
+    document.getElementById('cx-jobs-val').textContent = J;
+
+    const log10Combos = J * Math.log10(T) + logFactorial(J);
+    document.getElementById('cx-poss').textContent = formatBig(log10Combos);
+
+    const lang = document.body.lang || 'en';
+    const bruteSec = Math.pow(10, log10Combos - 9);
+    document.getElementById('cx-brute').textContent = formatTime(bruteSec, lang);
+
+    const aiMs = Math.pow(T * J, 1.5) * 0.05;
+    let aiText;
+    if (aiMs < 1000) aiText = Math.round(aiMs) + ' ms';
+    else if (aiMs < 60000) aiText = (aiMs / 1000).toFixed(1) + (lang === 'ar' ? ' ث' : ' sec');
+    else aiText = Math.round(aiMs / 60000) + (lang === 'ar' ? ' دق' : ' min');
+    document.getElementById('cx-ai').textContent = aiText;
+
+    const aiSec = aiMs / 1000;
+    const speedup = bruteSec / aiSec;
+    document.getElementById('cx-speedup').textContent = formatBig(Math.log10(speedup)) + '×';
+
+    // Visualization: log-scale bars
+    const ctx = cxCanvas.getContext('2d');
+    const w = cxCanvas.width, h = cxCanvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const padding = 60;
+    const chartW = w - padding * 2;
+    const chartH = h - padding * 2;
+
+    const maxLog = 30;
+    const techLog = Math.log10(T);
+    const jobLog = log10Combos;
+    const bruteLog = Math.log10(bruteSec);
+    const aiLog = Math.log10(aiSec);
+
+    // X axis baseline
+    ctx.strokeStyle = '#1F1F1B22';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padding, h - padding);
+    ctx.lineTo(w - padding, h - padding);
+    ctx.stroke();
+
+    const labels = lang === 'ar'
+      ? ['الفنيون', 'الاحتمالات', 'قوة غاشمة (ث)', 'AI (ث)']
+      : ['Technicians', 'Possibilities', 'Brute force (s)', 'AI solver (s)'];
+    const values = [techLog, jobLog, Math.max(0, bruteLog), Math.max(-3, aiLog)];
+    const colors = ['#2D4A3E', '#C65D2E', '#8F3F1B', '#4A6B5C'];
+
+    const barW = chartW / 4 - 30;
+    values.forEach((v, i) => {
+      const x = padding + (chartW / 4) * i + 15;
+      const barH = (Math.max(0, v) / maxLog) * chartH;
+      ctx.fillStyle = colors[i];
+      ctx.fillRect(x, h - padding - barH, barW, barH);
+
+      // Value label
+      ctx.fillStyle = '#1F1F1B';
+      ctx.font = 'bold 14px monospace';
+      ctx.textAlign = 'center';
+      const valLabel = v < 0 ? '< 1' : (v < 3 ? Math.round(Math.pow(10, v)).toString() : '10^' + Math.round(v));
+      ctx.fillText(valLabel, x + barW / 2, h - padding - barH - 8);
+
+      // X label
+      ctx.fillStyle = '#4A4A45';
+      ctx.font = '13px sans-serif';
+      ctx.fillText(labels[i], x + barW / 2, h - padding + 22);
+    });
+
+    // Y axis label
+    ctx.save();
+    ctx.translate(20, h / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillStyle = '#7A7A72';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(lang === 'ar' ? 'مقياس لوغاريتمي (log₁₀)' : 'Logarithmic scale (log₁₀)', 0, 0);
+    ctx.restore();
+  }
+
+  cxTech.addEventListener('input', drawComplexity);
+  cxJobs.addEventListener('input', drawComplexity);
+
+  /* =========================================================
+     SIMULATOR 2 — VRP MAP
+  ========================================================= */
+  const vrpCanvas = document.getElementById('vrp-canvas');
+  const vrpJobsEl = document.getElementById('vrp-jobs');
+  const vrpTechEl = document.getElementById('vrp-tech');
+
+  let vrpState = { customers: [], depot: null, routes: [], totalDist: 0, solveTime: 0, iter: 0, solved: false };
+
+  function vrpRegenerate() {
+    const n = parseInt(vrpJobsEl.value);
+    const w = vrpCanvas.width, h = vrpCanvas.height;
+    vrpState.depot = { x: w / 2, y: h / 2, id: 'D' };
+    vrpState.customers = [];
+    for (let i = 0; i < n; i++) {
+      vrpState.customers.push({
+        x: 80 + Math.random() * (w - 160),
+        y: 60 + Math.random() * (h - 120),
+        id: i + 1
+      });
+    }
+    vrpState.routes = [];
+    vrpState.solved = false;
+    vrpState.totalDist = 0;
+    vrpState.solveTime = 0;
+    vrpState.iter = 0;
+    drawVRP();
+    updateVRPStats();
+  }
+
+  function dist(a, b) {
+    return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
+  }
+
+  function nearestNeighbor(start, customers) {
+    const route = [start];
+    const remaining = [...customers];
+    while (remaining.length) {
+      const last = route[route.length - 1];
+      let bestIdx = 0, bestD = dist(last, remaining[0]);
+      for (let i = 1; i < remaining.length; i++) {
+        const d = dist(last, remaining[i]);
+        if (d < bestD) { bestD = d; bestIdx = i; }
+      }
+      route.push(remaining.splice(bestIdx, 1)[0]);
+    }
+    route.push(start);
+    return route;
+  }
+
+  function twoOpt(route) {
+    let improved = true;
+    let iters = 0;
+    while (improved && iters < 100) {
+      improved = false;
+      iters++;
+      for (let i = 1; i < route.length - 2; i++) {
+        for (let j = i + 1; j < route.length - 1; j++) {
+          const before = dist(route[i - 1], route[i]) + dist(route[j], route[j + 1]);
+          const after = dist(route[i - 1], route[j]) + dist(route[i], route[j + 1]);
+          if (after < before - 0.001) {
+            route.splice(i, j - i + 1, ...route.slice(i, j + 1).reverse());
+            improved = true;
+          }
+        }
+      }
+    }
+    return iters;
+  }
+
+  function vrpSolve() {
+    if (!vrpState.depot) return;
+    const t0 = performance.now();
+    const numTech = parseInt(vrpTechEl.value);
+    const customers = vrpState.customers;
+
+    // K-means-ish clustering to assign customers to technicians
+    const clusters = Array.from({ length: numTech }, () => []);
+    const seeds = [];
+    for (let i = 0; i < numTech; i++) {
+      const idx = Math.floor((i / numTech) * customers.length);
+      seeds.push({ x: customers[idx].x, y: customers[idx].y });
+    }
+    customers.forEach(c => {
+      let best = 0, bestD = dist(c, seeds[0]);
+      for (let i = 1; i < numTech; i++) {
+        const d = dist(c, seeds[i]);
+        if (d < bestD) { bestD = d; best = i; }
+      }
+      clusters[best].push(c);
+    });
+
+    // For each cluster: nearest neighbor + 2-opt
+    let totalIters = 0;
+    let totalDistance = 0;
+    vrpState.routes = clusters.map(cluster => {
+      if (cluster.length === 0) return [vrpState.depot, vrpState.depot];
+      const route = nearestNeighbor(vrpState.depot, cluster);
+      totalIters += twoOpt(route);
+      for (let i = 0; i < route.length - 1; i++) totalDistance += dist(route[i], route[i + 1]);
+      return route;
+    });
+
+    vrpState.totalDist = totalDistance;
+    vrpState.solveTime = performance.now() - t0;
+    vrpState.iter = totalIters;
+    vrpState.solved = true;
+    drawVRP();
+    updateVRPStats();
+  }
+
+  function updateVRPStats() {
+    const lang = document.body.lang || 'en';
+    document.getElementById('vrp-jobs-val').textContent = vrpJobsEl.value;
+    document.getElementById('vrp-tech-val').textContent = vrpTechEl.value;
+    document.getElementById('vrp-dist').textContent = vrpState.solved ? Math.round(vrpState.totalDist) + ' u' : '—';
+    document.getElementById('vrp-time').textContent = vrpState.solved ? vrpState.solveTime.toFixed(1) + ' ms' : '—';
+    document.getElementById('vrp-iter').textContent = vrpState.solved ? vrpState.iter : '—';
+  }
+
+  function drawVRP() {
+    const ctx = vrpCanvas.getContext('2d');
+    const w = vrpCanvas.width, h = vrpCanvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    if (!vrpState.depot) return;
+
+    // Subtle grid
+    ctx.strokeStyle = '#1F1F1B0A';
+    ctx.lineWidth = 1;
+    for (let x = 0; x < w; x += 50) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, h);
+      ctx.stroke();
+    }
+    for (let y = 0; y < h; y += 50) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(w, y);
+      ctx.stroke();
+    }
+
+    // Draw routes (if solved)
+    const colors = ['#2D4A3E', '#C65D2E', '#B8893E', '#4A6B5C', '#8F3F1B', '#1A2E26'];
+    if (vrpState.solved) {
+      vrpState.routes.forEach((route, i) => {
+        ctx.strokeStyle = colors[i % colors.length];
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(route[0].x, route[0].y);
+        for (let k = 1; k < route.length; k++) ctx.lineTo(route[k].x, route[k].y);
+        ctx.stroke();
+      });
+    }
+
+    // Customers
+    vrpState.customers.forEach((c, i) => {
+      ctx.fillStyle = '#FAF7F0';
+      ctx.strokeStyle = '#1F1F1B';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.arc(c.x, c.y, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = '#1F1F1B';
+      ctx.font = '10px monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(c.id, c.x, c.y);
+    });
+
+    // Depot
+    const d = vrpState.depot;
+    ctx.fillStyle = '#C65D2E';
+    ctx.fillRect(d.x - 10, d.y - 10, 20, 20);
+    ctx.fillStyle = '#FAF7F0';
+    ctx.font = 'bold 12px monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('D', d.x, d.y);
+  }
+
+  vrpJobsEl.addEventListener('input', () => {
+    vrpRegenerate();
+  });
+  vrpTechEl.addEventListener('input', () => {
+    document.getElementById('vrp-tech-val').textContent = vrpTechEl.value;
+    if (vrpState.solved) vrpSolve();
+  });
+
+  /* =========================================================
+     SIMULATOR 3 — CONSTRAINT IMPACT
+  ========================================================= */
+  const cnSkill = document.getElementById('cn-skill');
+  const cnTime = document.getElementById('cn-time');
+  const cnBal = document.getElementById('cn-bal');
+  const cnCanvas = document.getElementById('cn-canvas');
+
+  function drawConstraints() {
+    const skill = parseInt(cnSkill.value);
+    const time = parseInt(cnTime.value);
+    const bal = parseInt(cnBal.value);
+
+    document.getElementById('cn-skill-val').textContent = skill + '%';
+    document.getElementById('cn-time-val').textContent = time + '%';
+    document.getElementById('cn-bal-val').textContent = bal + '%';
+
+    // Compute outcomes
+    const totalJobs = 50;
+    const skillFactor = 1 - (skill / 100) * 0.4;
+    const timeFactor = 1 - (time / 100) * 0.3;
+    const assigned = Math.round(totalJobs * skillFactor * timeFactor);
+    const unfeas = totalJobs - assigned;
+
+    const balanceImpact = bal / 100;
+    const baseImbalance = 0.7 - balanceImpact * 0.6;
+
+    const quality = Math.round(((assigned / totalJobs) * 0.6 + (1 - baseImbalance) * 0.4) * 100);
+    const imbalance = (baseImbalance * 100).toFixed(0) + '%';
+
+    document.getElementById('cn-assigned').textContent = assigned + '/' + totalJobs;
+    document.getElementById('cn-unfeas').textContent = unfeas;
+    document.getElementById('cn-quality').textContent = quality + '%';
+    document.getElementById('cn-imbal').textContent = imbalance;
+
+    // Visualization: 5 technicians' workload bars
+    const ctx = cnCanvas.getContext('2d');
+    const w = cnCanvas.width, h = cnCanvas.height;
+    ctx.clearRect(0, 0, w, h);
+
+    const techCount = 5;
+    const padding = 50;
+    const chartW = w - padding * 2;
+    const chartH = h - padding * 2 - 30;
+    const barW = chartW / techCount - 20;
+
+    // Distribute jobs across techs based on balance setting
+    const baseShare = assigned / techCount;
+    const variance = (1 - balanceImpact) * baseShare * 0.8;
+    const techJobs = [];
+    for (let i = 0; i < techCount; i++) {
+      const noise = (Math.sin(i * 1.7 + skill * 0.05 + time * 0.03) * 0.5 + 0.5);
+      techJobs.push(Math.round(baseShare + (noise - 0.5) * variance * 2));
+    }
+    const maxJ = Math.max(...techJobs, 1);
+
+    // X axis baseline
+    ctx.strokeStyle = '#1F1F1B22';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(padding, h - padding - 30);
+    ctx.lineTo(w - padding, h - padding - 30);
+    ctx.stroke();
+
+    techJobs.forEach((j, i) => {
+      const x = padding + (chartW / techCount) * i + 10;
+      const bh = (j / maxJ) * chartH;
+      const overload = j > baseShare * 1.3;
+      ctx.fillStyle = overload ? '#C65D2E' : '#2D4A3E';
+      ctx.fillRect(x, h - padding - 30 - bh, barW, bh);
+
+      ctx.fillStyle = '#1F1F1B';
+      ctx.font = 'bold 13px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(j, x + barW / 2, h - padding - 30 - bh - 6);
+
+      ctx.fillStyle = '#4A4A45';
+      ctx.font = '12px sans-serif';
+      const lang = document.body.lang || 'en';
+      ctx.fillText((lang === 'ar' ? 'فني ' : 'T') + (i + 1), x + barW / 2, h - padding - 10);
+    });
+
+    // Title
+    const lang = document.body.lang || 'en';
+    ctx.fillStyle = '#7A7A72';
+    ctx.font = '13px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText(lang === 'ar' ? 'توزيع الحمل اليومي على الفنيين' : 'Daily workload per technician', padding, 25);
+  }
+
+  cnSkill.addEventListener('input', drawConstraints);
+  cnTime.addEventListener('input', drawConstraints);
+  cnBal.addEventListener('input', drawConstraints);
+
+  /* =========================================================
+     CODE COPY
+  ========================================================= */
+  function copyCode(btn) {
+    const code = btn.parentElement.parentElement.querySelector('pre').textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      const orig = btn.innerHTML;
+      btn.textContent = '✓';
+      setTimeout(() => btn.innerHTML = orig, 1500);
+    });
+  }
+
+  /* =========================================================
+     QUIZ
+  ========================================================= */
+  const quizQuestions = [
+    {
+      en: {
+        q: "What complexity class does Field Workforce Scheduling belong to?",
+        opts: ["Polynomial (P)", "NP-hard", "Linear", "Constant"],
+        correct: 1,
+        feedback: "FWS is NP-hard — no known polynomial-time algorithm solves all instances optimally. That's why we use heuristics and approximation methods."
+      },
+      ar: {
+        q: "إلى أي فئة تعقيد تنتمي مشكلة جدولة القوى العاملة الميدانية؟",
+        opts: ["متعددة الحدود (P)", "NP-hard", "خطية", "ثابتة"],
+        correct: 1,
+        feedback: "هي NP-hard — لا توجد خوارزمية معروفة بزمن متعدد الحدود تحلّ كل الحالات بشكل مثالي. لهذا نستخدم الخوارزميات الاستدلالية والتقريبية."
+      }
+    },
+    {
+      en: {
+        q: "Which constraint type CANNOT be violated under any circumstances?",
+        opts: ["Soft constraint", "Preference", "Hard constraint", "Objective"],
+        correct: 2,
+        feedback: "Hard constraints (skill matching, time windows, working hours) are inviolable. Soft constraints are preferences that can be sacrificed to satisfy hard ones."
+      },
+      ar: {
+        q: "أي نوع من القيود لا يمكن كسره تحت أي ظرف؟",
+        opts: ["قيد لين", "تفضيل", "قيد صارم", "هدف"],
+        correct: 2,
+        feedback: "القيود الصارمة (مطابقة المهارات، النوافذ الزمنية، ساعات العمل) لا يمكن انتهاكها. أما القيود اللينة فهي تفضيلات يمكن التضحية بها لإرضاء القيود الصارمة."
+      }
+    },
+    {
+      en: {
+        q: "Which approach is best for problems with 1000+ jobs where 'good enough' is acceptable?",
+        opts: ["Brute force search", "Constraint Programming (CP-SAT)", "Metaheuristics (Genetic, Tabu)", "Manual scheduling"],
+        correct: 2,
+        feedback: "Metaheuristics scale beautifully and find near-optimal solutions fast. Exact methods like CP-SAT struggle past ~500 jobs; brute force is infeasible at any non-trivial size."
+      },
+      ar: {
+        q: "أي نهج هو الأنسب للمشاكل التي تضم ١٠٠٠ مهمة أو أكثر حيث يكفي الحل الجيد؟",
+        opts: ["البحث بالقوة الغاشمة", "البرمجة بالقيود (CP-SAT)", "الخوارزميات الاستدلالية (الجينية، تابو)", "الجدولة اليدوية"],
+        correct: 2,
+        feedback: "الخوارزميات الاستدلالية تتوسّع بشكل ممتاز وتجد حلولاً قريبة من المثالية بسرعة. الطرق الدقيقة مثل CP-SAT تتعثّر بعد ٥٠٠ مهمة؛ والقوة الغاشمة غير ممكنة لأي حجم غير تافه."
+      }
+    },
+    {
+      en: {
+        q: "If a customer's time window is 9:00–12:00 and a job takes 90 minutes, what's the latest start time?",
+        opts: ["9:00", "10:30", "11:00", "12:00"],
+        correct: 1,
+        feedback: "The job must finish by 12:00, so it must start no later than 12:00 − 90 min = 10:30. This is constraint (3) and (4) in our formulation."
+      },
+      ar: {
+        q: "إذا كانت نافذة العميل الزمنية ٩:٠٠–١٢:٠٠ والمهمة تستغرق ٩٠ دقيقة، فما هو أقصى وقت للبدء؟",
+        opts: ["٩:٠٠", "١٠:٣٠", "١١:٠٠", "١٢:٠٠"],
+        correct: 1,
+        feedback: "يجب أن تنتهي المهمة بحلول ١٢:٠٠، لذلك يجب أن تبدأ في موعد أقصاه ١٢:٠٠ − ٩٠ دقيقة = ١٠:٣٠. هذا يعكس القيدين (٣) و(٤) في صياغتنا."
+      }
+    },
+    {
+      en: {
+        q: "What is the primary role of Machine Learning in modern FWS systems?",
+        opts: ["Replace the optimization solver", "Predict job durations and traffic to feed the optimizer", "Eliminate the need for constraints", "Schedule technicians directly"],
+        correct: 1,
+        feedback: "ML doesn't schedule directly — it provides better inputs to the optimizer. Predicting accurate job durations and travel times makes the entire pipeline smarter."
+      },
+      ar: {
+        q: "ما هو الدور الأساسي لتعلّم الآلة في أنظمة FWS الحديثة؟",
+        opts: ["استبدال حلّال التحسين", "التنبؤ بمدة المهام والازدحام لتغذية المُحسّن", "إلغاء الحاجة للقيود", "جدولة الفنيين مباشرة"],
+        correct: 1,
+        feedback: "تعلّم الآلة لا يُجدول مباشرة — بل يوفّر مدخلات أدق للمُحسّن. التنبؤ الدقيق بمدة المهام وأزمنة التنقل يجعل المنظومة بأكملها أذكى."
+      }
+    },
+    {
+      en: {
+        q: "Why do real-world dispatching systems combine multiple AI techniques rather than rely on one?",
+        opts: ["To impress investors", "Each technique excels at different aspects of the problem", "Redundancy in case one fails", "It's the law"],
+        correct: 1,
+        feedback: "Each technique has strengths: CP for exact solutions, metaheuristics for scale, ML for prediction, RL for dynamic adaptation. Hybrid systems leverage the best of each."
+      },
+      ar: {
+        q: "لماذا تدمج أنظمة التوزيع الحقيقية عدة تقنيات ذكاء اصطناعي بدلاً من الاعتماد على واحدة؟",
+        opts: ["لإبهار المستثمرين", "كل تقنية تتفوّق في جانب مختلف من المشكلة", "للاحتياط في حال تعطل إحداها", "لأنه قانون"],
+        correct: 1,
+        feedback: "لكل تقنية نقاط قوة: CP للحلول الدقيقة، الاستدلالية للتوسّع، تعلّم الآلة للتنبؤ، التعلّم المعزّز للتكيّف الديناميكي. الأنظمة الهجينة تستفيد من الأفضل في كل منها."
+      }
+    }
+  ];
+
+  let quizAnswered = new Array(quizQuestions.length).fill(null);
+
+  function buildQuiz() {
+    const lang = document.body.lang || 'en';
+    const container = document.getElementById('quiz-container');
+    container.innerHTML = '';
+    quizQuestions.forEach((q, qi) => {
+      const data = q[lang];
+      const div = document.createElement('div');
+      div.className = 'quiz-question';
+      div.innerHTML = `
+        <div class="quiz-q-header">
+          <div class="quiz-q-num">${String(qi + 1).padStart(2, '0')}</div>
+          <div class="quiz-q-text">${data.q}</div>
+        </div>
+        <div class="quiz-options" id="opts-${qi}">
+          ${data.opts.map((opt, oi) => `
+            <button class="quiz-option" onclick="answerQuestion(${qi}, ${oi})" id="opt-${qi}-${oi}">
+              <span class="opt-letter">${String.fromCharCode(65 + oi)}</span>
+              <span>${opt}</span>
+            </button>
+          `).join('')}
+        </div>
+        <div class="quiz-feedback" id="fb-${qi}"></div>
+      `;
+      container.appendChild(div);
+    });
+
+    // Restore answered state
+    quizAnswered.forEach((ans, qi) => {
+      if (ans !== null) {
+        renderAnswer(qi, ans);
+      }
+    });
+
+    if (quizAnswered.every(a => a !== null)) {
+      showSummary();
+    }
+  }
+
+  function answerQuestion(qi, oi) {
+    if (quizAnswered[qi] !== null) return;
+    quizAnswered[qi] = oi;
+    renderAnswer(qi, oi);
+    if (quizAnswered.every(a => a !== null)) {
+      setTimeout(showSummary, 600);
+    }
+  }
+
+  function renderAnswer(qi, oi) {
+    const lang = document.body.lang || 'en';
+    const data = quizQuestions[qi][lang];
+    const isCorrect = oi === data.correct;
+
+    const opts = document.querySelectorAll(`#opts-${qi} .quiz-option`);
+    opts.forEach((o, i) => {
+      o.classList.add('disabled');
+      if (i === data.correct) o.classList.add('correct');
+      else if (i === oi) o.classList.add('wrong');
+    });
+
+    const fb = document.getElementById(`fb-${qi}`);
+    fb.classList.add('show', isCorrect ? 'correct' : 'wrong');
+    fb.innerHTML = `<strong>${isCorrect ? (lang === 'ar' ? 'صحيح! ' : 'Correct! ') : (lang === 'ar' ? 'غير صحيح. ' : 'Not quite. ')}</strong>${data.feedback}`;
+  }
+
+  function showSummary() {
+    const lang = document.body.lang || 'en';
+    let correct = 0;
+    quizAnswered.forEach((ans, qi) => {
+      if (ans === quizQuestions[qi][lang].correct) correct++;
+    });
+    document.getElementById('score-num').textContent = correct;
+    let msg;
+    if (correct === 6) msg = lang === 'ar' ? 'ممتاز! فهمك للموضوع متين جداً.' : 'Excellent — you have a strong grasp of the material.';
+    else if (correct >= 4) msg = lang === 'ar' ? 'جيد جداً. راجع الأقسام التي أخطأت فيها.' : 'Solid work. Review the sections where you missed.';
+    else if (correct >= 2) msg = lang === 'ar' ? 'بداية جيدة، ولكن تحتاج إلى مراجعة المفاهيم الرئيسية.' : 'A start — revisit the core concepts before moving on.';
+    else msg = lang === 'ar' ? 'لا بأس، عُد للأقسام السابقة وحاول مرة أخرى.' : 'No problem — head back to the chapters and try again.';
+    document.getElementById('score-msg').textContent = msg;
+    document.getElementById('quiz-summary').classList.add('show');
+  }
+
+  function resetQuiz() {
+    quizAnswered = new Array(quizQuestions.length).fill(null);
+    document.getElementById('quiz-summary').classList.remove('show');
+    buildQuiz();
+    document.getElementById('quiz').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  /* =========================================================
+     INIT
+  ========================================================= */
+  document.addEventListener('DOMContentLoaded', () => {
+    drawComplexity();
+    vrpRegenerate();
+    drawConstraints();
+    buildQuiz();
+    updateTOC();
+  });
+
+  // Run init immediately too in case DOMContentLoaded already fired
+  drawComplexity();
+  vrpRegenerate();
+  drawConstraints();
+  buildQuiz();
+</script>
+
+</body>
+</html>
